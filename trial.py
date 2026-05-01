@@ -30,7 +30,7 @@ def show_header():
     print("   CURRENT DATE & TIME:", get_current_time().strftime("%B %d %Y , %I:%M %p"))
     print("===================================================\n")
 
-# -----------------------------
+
 # DATE PARSER
 # -----------------------------
 def parse_datetime(date, time_str):
