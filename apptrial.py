@@ -56,9 +56,9 @@ def delete_task_db(task_id):
 # -----------------------------
 # UI CONFIG
 # -----------------------------
-st.set_page_config(page_title="Task Dashboard", layout="wide")
+st.set_page_config(page_title="Task Dashboard", layout="centered")
 
-st.title("📊 Smart Task Manager (Persistent)")
+st.title("📋 Smart Task Manager")
 st.write("🕒", get_current_time().strftime("%B %d %Y, %I:%M %p"))
 
 st.divider()
@@ -70,12 +70,8 @@ st.subheader("➕ Add Task")
 
 with st.form("task_form"):
     name = st.text_input("Task Name")
-
-    col1, col2 = st.columns(2)
-    with col1:
-        date = st.date_input("Date")
-    with col2:
-        time_input = st.time_input("Time")
+    date = st.date_input("Date")
+    time_input = st.time_input("Time")
 
     submitted = st.form_submit_button("Add Task")
 
@@ -89,7 +85,7 @@ with st.form("task_form"):
                 st.error("Time already passed!")
             else:
                 add_task_db(name, task_datetime.strftime("%Y-%m-%d %H:%M:%S"))
-                st.success("Task saved permanently!")
+                st.success("Task saved!")
 
 st.divider()
 
@@ -99,38 +95,7 @@ st.divider()
 tasks = get_tasks()
 
 # -----------------------------
-# STATS
-# -----------------------------
-total = len(tasks)
-done = sum(1 for t in tasks if t[3] == 1)
-expired = sum(1 for t in tasks if t[3] == 0 and datetime.strptime(t[2], "%Y-%m-%d %H:%M:%S") < get_current_time())
-pending = total - done - expired
-
-col1, col2, col3, col4 = st.columns(4)
-
-col1.metric("Total", total)
-col2.metric("Done", done)
-col3.metric("Pending", pending)
-col4.metric("Expired", expired)
-
-# -----------------------------
-# CHART
-# -----------------------------
-st.subheader("📊 Task Analytics")
-
-if total > 0:
-    df = pd.DataFrame({
-        "Status": ["Done", "Pending", "Expired"],
-        "Count": [done, pending, expired]
-    })
-    st.bar_chart(df.set_index("Status"))
-else:
-    st.info("No data yet.")
-
-st.divider()
-
-# -----------------------------
-# TASK LIST
+# 📌 TASK LIST (NOW ON TOP)
 # -----------------------------
 st.subheader("📌 Task List")
 
@@ -141,20 +106,58 @@ else:
         task_id, name, time_str, done_flag = task
         status = get_task_status(task)
 
-        col1, col2, col3, col4 = st.columns([4, 3, 2, 2])
+        st.container(border=True)
+
+        col1, col2 = st.columns([3, 2])
 
         with col1:
             st.write(f"**{name}**")
+            st.caption(time_str)
+
         with col2:
-            st.write(time_str)
-        with col3:
             st.write(status)
-        with col4:
-            if not done_flag:
-                if st.button("✅", key=f"d{task_id}"):
-                    mark_done_db(task_id)
+
+            colA, colB = st.columns(2)
+            with colA:
+                if not done_flag:
+                    if st.button("✅", key=f"d{task_id}"):
+                        mark_done_db(task_id)
+                        st.rerun()
+            with colB:
+                if st.button("🗑", key=f"x{task_id}"):
+                    delete_task_db(task_id)
                     st.rerun()
 
-            if st.button("🗑", key=f"x{task_id}"):
-                delete_task_db(task_id)
-                st.rerun()
+st.divider()
+
+# -----------------------------
+# 📊 OVERVIEW (VERTICAL STYLE)
+# -----------------------------
+st.subheader("📊 Overview")
+
+total = len(tasks)
+done = sum(1 for t in tasks if t[3] == 1)
+expired = sum(1 for t in tasks if t[3] == 0 and datetime.strptime(t[2], "%Y-%m-%d %H:%M:%S") < get_current_time())
+pending = total - done - expired
+
+# 👉 vertical style
+st.metric("Total Tasks", total)
+st.metric("Done", done)
+st.metric("Pending", pending)
+st.metric("Expired", expired)
+
+st.divider()
+
+# -----------------------------
+# 📈 TASK ANALYTICS (LAST)
+# -----------------------------
+st.subheader("📈 Task Analytics")
+
+if total > 0:
+    df = pd.DataFrame({
+        "Status": ["Done", "Pending", "Expired"],
+        "Count": [done, pending, expired]
+    })
+    st.bar_chart(df.set_index("Status"))
+else:
+    st.info("No data yet.")
