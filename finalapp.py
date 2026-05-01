@@ -3,9 +3,7 @@ from datetime import datetime, timedelta
 import pandas as pd
 import sqlite3
 
-# -----------------------------
-# DB SETUP
-# -----------------------------
+
 conn = sqlite3.connect("tasks.db", check_same_thread=False)
 c = conn.cursor()
 
@@ -19,9 +17,6 @@ CREATE TABLE IF NOT EXISTS tasks (
 """)
 conn.commit()
 
-# -----------------------------
-# FUNCTIONS
-# -----------------------------
 def get_current_time():
     return datetime.now()
 
@@ -53,9 +48,6 @@ def delete_task_db(task_id):
     c.execute("DELETE FROM tasks WHERE id=?", (task_id,))
     conn.commit()
 
-# -----------------------------
-# UI CONFIG
-# -----------------------------
 st.set_page_config(page_title="Task Dashboard", layout="centered")
 
 st.title("📋 Smart Task Manager")
@@ -63,9 +55,7 @@ st.write("🕒", get_current_time().strftime("%B %d %Y, %I:%M %p"))
 
 st.divider()
 
-# -----------------------------
-# ADD TASK
-# -----------------------------
+
 st.subheader("➕ Add Task")
 
 with st.form("task_form"):
@@ -93,14 +83,10 @@ with st.form("task_form"):
 
 st.divider()
 
-# -----------------------------
-# LOAD TASKS
-# -----------------------------
+
 tasks = get_tasks()
 
-# -----------------------------
-# 📌 TASK LIST
-# -----------------------------
+
 st.subheader("📌 Task List")
 
 if not tasks:
