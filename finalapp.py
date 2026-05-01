@@ -3,7 +3,9 @@ from datetime import datetime, timedelta
 import pandas as pd
 import sqlite3
 
-
+# -----------------------------
+# DB SETUP
+# -----------------------------
 conn = sqlite3.connect("tasks.db", check_same_thread=False)
 c = conn.cursor()
 
@@ -17,16 +19,18 @@ CREATE TABLE IF NOT EXISTS tasks (
 """)
 conn.commit()
 
-
+# -----------------------------
+# FUNCTIONS
+# -----------------------------
 def get_current_time():
     return datetime.now()
 
 def get_task_status(task):
     now = get_current_time()
-    task_time = datetime.strptime(task[2], "%B %d %Y , %H:%M:%S")
+    task_time = datetime.strptime(task[2], "%Y-%m-%d %H:%M:%S")
 
     if task[3]:
-        return "✔️ Done"
+        return "✅ Done"
     elif task_time < now:
         return "❌ Expired"
     else:
@@ -49,7 +53,9 @@ def delete_task_db(task_id):
     c.execute("DELETE FROM tasks WHERE id=?", (task_id,))
     conn.commit()
 
-
+# -----------------------------
+# UI CONFIG
+# -----------------------------
 st.set_page_config(page_title="Task Dashboard", layout="centered")
 
 st.title("📋 Smart Task Manager")
@@ -57,7 +63,9 @@ st.write("🕒", get_current_time().strftime("%B %d %Y, %I:%M %p"))
 
 st.divider()
 
-
+# -----------------------------
+# ADD TASK
+# -----------------------------
 st.subheader("➕ Add Task")
 
 with st.form("task_form"):
@@ -80,15 +88,19 @@ with st.form("task_form"):
             if task_datetime < get_current_time():
                 st.error("Time already passed!")
             else:
-                add_task_db(name, task_datetime.strftime("%d-%m-%Y , %H:%M:%S"))
+                add_task_db(name, task_datetime.strftime("%Y-%m-%d %H:%M:%S"))
                 st.success("Task saved!")
 
 st.divider()
 
-
+# -----------------------------
+# LOAD TASKS
+# -----------------------------
 tasks = get_tasks()
 
-
+# -----------------------------
+# 📌 TASK LIST
+# -----------------------------
 st.subheader("📌 Task List")
 
 if not tasks:
@@ -110,22 +122,24 @@ else:
             colA, colB = st.columns(2)
             with colA:
                 if not done_flag:
-                    if st.button("✔️", key=f"d{task_id}"):
+                    if st.button("✅", key=f"d{task_id}"):
                         mark_done_db(task_id)
                         st.rerun()
             with colB:
-                if st.button("🗑 Delete", key=f"x{task_id}"):
+                if st.button("🗑", key=f"x{task_id}"):
                     delete_task_db(task_id)
                     st.rerun()
 
 st.divider()
 
-
+# -----------------------------
+# 📊 OVERVIEW
+# -----------------------------
 st.subheader("📊 Overview")
 
 total = len(tasks)
 done = sum(1 for t in tasks if t[3] == 1)
-expired = sum(1 for t in tasks if t[3] == 0 and datetime.strptime(t[2], "%d-%m-%Y , %H:%M:%S") < get_current_time())
+expired = sum(1 for t in tasks if t[3] == 0 and datetime.strptime(t[2], "%Y-%m-%d %H:%M:%S") < get_current_time())
 pending = total - done - expired
 
 st.metric("Total Tasks", total)
@@ -135,7 +149,9 @@ st.metric("Expired", expired)
 
 st.divider()
 
-
+# -----------------------------
+# 📈 ANALYTICS
+# -----------------------------
 st.subheader("📈 Task Analytics")
 
 if total > 0:
