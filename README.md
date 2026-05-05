@@ -140,7 +140,7 @@ The application accepts a variety of date and time input formats for user conven
 
 **Atia Sanjida**
 
-- 📧 Email: your-email@example.com
+- 📧 Email: atia.abk@gmail.com
 - 🔗 LinkedIn: [linkedin.com/in/your-profile](https://www.linkedin.com/in/atia-oishe-085947233/)
 - 💻 GitHub: [github.com/your-username](https://github.com/atiaabk)
 
