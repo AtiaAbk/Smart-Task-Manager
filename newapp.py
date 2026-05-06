@@ -1,15 +1,11 @@
 import streamlit as st
 from datetime import datetime
 
-# -----------------------------
-# SESSION STATE (IMPORTANT)
-# -----------------------------
+
 if "tasks" not in st.session_state:
     st.session_state.tasks = []
 
-# -----------------------------
-# TIME FUNCTIONS
-# -----------------------------
+
 def get_current_time():
     return datetime.now()
 
@@ -23,9 +19,7 @@ def get_task_status(task):
     else:
         return "⏳ Not Done"
 
-# -----------------------------
-# HEADER
-# -----------------------------
+
 st.title("📋 Smart Task Manager")
 st.write("### 🕒 Current Time:", get_current_time().strftime("%B %d %Y, %I:%M %p"))
 
