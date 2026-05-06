@@ -118,9 +118,7 @@ else:
 
 st.divider()
 
-# -----------------------------
-# 📊 OVERVIEW
-# -----------------------------
+
 st.subheader("📊 Overview")
 
 total = len(tasks)
@@ -135,9 +133,7 @@ st.metric("Expired", expired)
 
 st.divider()
 
-# -----------------------------
-# 📈 ANALYTICS
-# -----------------------------
+
 st.subheader("📈 Task Analytics")
 
 if total > 0:
