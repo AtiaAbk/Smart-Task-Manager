@@ -25,9 +25,7 @@ st.write("### 🕒 Current Time:", get_current_time().strftime("%B %d %Y, %I:%M 
 
 st.divider()
 
-# -----------------------------
-# ADD TASK
-# -----------------------------
+
 st.subheader("➕ Add New Task")
 
 with st.form("task_form"):
