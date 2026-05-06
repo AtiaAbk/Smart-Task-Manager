@@ -58,9 +58,7 @@ with st.form("task_form"):
 
 st.divider()
 
-# -----------------------------
-# VIEW TASKS
-# -----------------------------
+
 st.subheader("📌 Task List")
 
 if not st.session_state.tasks:
